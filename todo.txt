@@ -1,0 +1,11 @@
+
+/** TO DO 
+
+- When create Album ---> create New page with short code [ptnpicasa]
+- upgrade upload to drag / drop zone
+- test for timeouts
+- figure out install and settings
+- change all PWA variable to ptn_gphoto
+
+*/
+
