@@ -8,6 +8,19 @@ Version:	0.1
 Author URI: 	
 */
 
+// ----------------------------------------------------------------------------------------------------------
+// Ensure that PWA+PHP is installed
+// ----------------------------------------------------------------------------------------------------------
+
+function gPhoto_WP_activate() {
+	$PWAPLUSPHP = 'pwaplusphp/pwaplusphp.php';
+	if (!is_plugin_active($PWAPLUSPHP)){
+		deactivate_plugins(plugin_basename(__FILE__));
+		wp_die('<a href="https://wordpress.org/plugins/pwaplusphp/"> pwaplusphp is required.</a>');
+	}
+}
+register_activation_hook( __FILE__, 'gPhoto_WP_activate' );
+
 
 // ----------------------------------------------------------------------------------------------------------
 // Create a page with the photo upload form
@@ -34,10 +47,7 @@ function ptn_gPhoto_WP_PhotoUpload_shortcode( $atts, $content = null ) {
 // ----------------------------------------------------------------------------------------------------------
 function ptn_gPhoto_WP_CreateAlbum_shortcode(){
 	echo "In create album shortcode";
-	/* Form for input of new album
-	1 - check for dups
-	2 - if not dup
-		a-create album
+/*
 		b-create WP-page w/ [ptnpicasa] shortcode
 	3 - if dup 
 		a-error message
@@ -45,22 +55,10 @@ function ptn_gPhoto_WP_CreateAlbum_shortcode(){
 	*/
 }
 
-
-// ----------------------------------------------------------------------------------------------------------
-// gPhoto-WP-Plugin Installer
-// ----------------------------------------------------------------------------------------------------------
-function ptnpicasa_options() {
-  echo '<div class="wrap">';
-  require_once(dirname(__FILE__).'/install.php');
-  echo '</div>';
-}
-
-
 /// ----------------------------------------------------------------------------------------------------------
 // Includes
 // ----------------------------------------------------------------------------------------------------------
-require_once(dirname(__FILE__).'/includes/settings.php');
-require_once(dirname(__FILE__)."includes/albums.php";
+require_once(dirname(__FILE__)."/includes/albums.php");
 require_once(dirname(__FILE__).'/includes/photos.php');
 
 // ----------------------------------------------------------------------------------------------------------
@@ -69,6 +67,8 @@ require_once(dirname(__FILE__).'/includes/photos.php');
 add_action('admin_menu', 'ptnpicasa_menu');
 add_filter('widget_text', 'do_shortcode');
 add_shortcode('UploadPhotos', 'ptn_gPhoto_WP_PhotoUpload_shortcode');
-add_shortcode('CreateAlbum', 'ptn_gPhoto_WP_CreateAlbum_shortcode');
+//add_shortcode('CreateAlbum', 'ptn_gPhoto_WP_CreateAlbum_shortcode');
+add_shortcode('CreateAlbum', 'ptn_createAlbumForm');
+
 
 ?>

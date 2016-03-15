@@ -101,4 +101,56 @@ function ptn_createAlbum($file, $title){
 	return($code);
 }
 
+function ptn_CreateAlbumForm(){
+		echo '
+		<form id="upload" method="POST" enctype="multipart/form-data">
+		<fieldset>
+		<legend>Create a new Google Photo Album</legend>
+		<div>
+			<label for="albumname">Album name:</label>
+			<input type="text" id="albumname" name="albumname" />';
+		echo '</div>
+		<div id="submitbutton">
+			<button type="submit">Create this Album</button>
+		</div>
+		</fieldset>
+		</form>
+		';
+
+}
+
+function ptn_validateAlbumForm(){
+
+	/* if is this a duplicate
+			reset form
+			error message
+		else
+	*/
+	
+	$PICASAWEB_USER	= get_option("pwaplusphp_picasa_username");	
+	$PICASAWEB_USER = strstr($PICASAWEB_USER,'@',true);
+	$file = 'https://picasaweb.google.com/data/feed/api/user/'.$PICASAWEB_USER;
+	
+	$title = $_POST['albumname'];
+	
+	ptn_createAlbum($file, $title);
+	
+	$post = array(
+		'post_title' => $title,
+		'post_type' => 'page',
+		'post_content' => 'Please use this page to upload photos to the '.$title.'album.</br></br>[UploadPhotos]',
+		'post_status' => 'publish'
+		);
+	$error = true;
+	wp_insert_post($post, $error);	
+	
+	// redirect to newly created page here
+	
+}
+
+// ----------------------------------------------------------------------------------------------------------
+// Redirect form POST to same page
+// ----------------------------------------------------------------------------------------------------------
+add_action('template_redirect', 'ptn_validateAlbumForm');
+
 ?>
