@@ -4,11 +4,13 @@
 - When create Album ---> create New page with short code [ptnpicasa]
 - upgrade upload to drag / drop zone
 - test for timeouts
-- figure out install and settings
 
-- make dependent upon PWA+PHP
 - Create new album shortcode
 - Upload to wordpress.org/plugins
+
+
+- rename main file
+- rename main shortcode
 
 */
 

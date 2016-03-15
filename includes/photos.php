@@ -1,11 +1,14 @@
 <?php
 
+// ----------------------------------------------------------------------------------------------------------
+// Post photos to specified Google Photo album
+// ----------------------------------------------------------------------------------------------------------
 function ptn_postPhoto(){
 	if(!isset($_POST['UPLOAD FILES'])){		
 		$TOKEN_EXPIRES		= get_option("pwaplusphp_token_expires");
 		$now = date("U");
 		if ($now > $TOKEN_EXPIRES) {
-			ptn_refreshOAuth2Token();
+			pwaplusphp_refreshOAuth2Token();
 		}
 		$albumID = $_POST['ALBUM_ID'];
 		$PICASAWEB_USER	 	= get_option("pwaplusphp_picasa_username");	
@@ -43,6 +46,9 @@ function ptn_postPhoto(){
 	}
 }
 
+// ----------------------------------------------------------------------------------------------------------
+// Photo upload form
+// ----------------------------------------------------------------------------------------------------------
 function ptn_uploadPhotos($album){
 	echo '
 	<form id="upload" method="POST" enctype="multipart/form-data">
@@ -64,6 +70,10 @@ function ptn_uploadPhotos($album){
 	</div>
 	';
 }
+
+// ----------------------------------------------------------------------------------------------------------
+// Redirect form POST to same page
+// ----------------------------------------------------------------------------------------------------------
 add_action('template_redirect', 'ptn_postPhoto');
 
 ?>

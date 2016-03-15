@@ -1,14 +1,8 @@
 <?php
 
-/*
-
-- Get album list
-- Create new album
-- Lookup name by ID
-- Lookup ID by name 
-
-*/
-
+// ----------------------------------------------------------------------------------------------------------
+// Get a list of album IDs and Names from selected Google Photo Account
+// ----------------------------------------------------------------------------------------------------------
 function ptn_getAlbums($file){
 	$file = $file.'?kind=album&fields=entry(id,title)';
 	$xml = simplexml_load_file($file);
@@ -18,6 +12,9 @@ function ptn_getAlbums($file){
 	return $xml;
 }
 
+// ----------------------------------------------------------------------------------------------------------
+// Display album ID and Name in a list - primarily used for debugging
+// ----------------------------------------------------------------------------------------------------------
 function ptn_displayAlbums($albumArray){
 	foreach($albumArray as $album){
 		print $album->id.' '.$album->title;
@@ -25,6 +22,9 @@ function ptn_displayAlbums($albumArray){
 	}
 }
 
+// ----------------------------------------------------------------------------------------------------------
+// Get album ID by album name
+// ----------------------------------------------------------------------------------------------------------
 function ptn_getAlbumIdByName($albumName, $albumArray){
 	foreach ($albumArray as $album){
 		if ($album->title == $albumName){
@@ -34,6 +34,9 @@ function ptn_getAlbumIdByName($albumName, $albumArray){
 	return false;
 }
 
+// ----------------------------------------------------------------------------------------------------------
+// Get album name from album ID
+// ----------------------------------------------------------------------------------------------------------
 function ptn_getAlbumNameById($albumId, $albumArray){
 	foreach ($albumArray as $album){
 		if ($album->id == $albumId){
@@ -43,6 +46,9 @@ function ptn_getAlbumNameById($albumId, $albumArray){
 	return false;
 }
 
+// ----------------------------------------------------------------------------------------------------------
+// Determine if album with this name already exists
+// ----------------------------------------------------------------------------------------------------------
 function ptn_duplicateAlbumCk($title, $albumArray){
 	foreach ($albumArray as $album){
 		if ($album->title == $title){
@@ -52,11 +58,14 @@ function ptn_duplicateAlbumCk($title, $albumArray){
 	return false;
 }
 
+// ----------------------------------------------------------------------------------------------------------
+// Create a new Google Photo Album
+// ----------------------------------------------------------------------------------------------------------
 function ptn_createAlbum($file, $title){
 	$TOKEN_EXPIRES		= get_option("pwaplusphp_token_expires");
 	$now = date("U");
 	if ($now > $TOKEN_EXPIRES) {
-		ptn_refreshOAuth2Token();
+		pwaplusphp_refreshOAuth2Token();
 	}	
 	$message_body = 	
 			"<entry xmlns='http://www.w3.org/2005/Atom'
