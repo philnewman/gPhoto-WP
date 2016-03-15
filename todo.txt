@@ -1,16 +1,17 @@
 
 /** TO DO 
 
-- When create Album ---> create New page with short code [ptnpicasa]
+- rename createAlbumShortcode
+- move uploadPhotoShortcode to photos.php
+- finish / test if new album create logic
+- better error handling on activation error
+- self-deactivation if pwaplusphp is not active
+
 - upgrade upload to drag / drop zone
 - test for timeouts
 
-- Create new album shortcode
+- Version
 - Upload to wordpress.org/plugins
-
-
-- rename main file
-- rename main shortcode
 
 */
 
