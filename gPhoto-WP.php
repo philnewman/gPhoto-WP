@@ -8,6 +8,9 @@ Version:	0.1
 Author URI: 	
 */
 
+define( 'WP_DEBUG', true );
+error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+
 // ----------------------------------------------------------------------------------------------------------
 // Ensure that PWA+PHP is installed
 // ----------------------------------------------------------------------------------------------------------
@@ -26,17 +29,9 @@ register_activation_hook( __FILE__, 'gPhoto_WP_activate' );
 // Create a page with the photo upload form
 // ----------------------------------------------------------------------------------------------------------
 function ptn_gPhoto_WP_PhotoUpload_shortcode( $atts, $content = null ) {
-	
-	$PICASAWEB_USER	= get_option("pwaplusphp_picasa_username");	
-	$PICASAWEB_USER = strstr($PICASAWEB_USER,'@',true);
-	$file = 'https://picasaweb.google.com/data/feed/api/user/'.$PICASAWEB_USER;
-	
-	$albums = ptn_getAlbums($file);	
+		
+	$albums = ptn_getAlbums();	
 	$title = get_the_title();	
-	if (!ptn_duplicateAlbumCk($title, $albums)){
-		echo 'Creating album: '.$title.'</br>';
-		$ptn_createAlbumStatus = ptn_createAlbum($file, $title);
-	}
 	$albumId = ptn_getAlbumIdByName($title, $albums);
 	ptn_uploadPhotos($albumId);
 	
@@ -55,11 +50,12 @@ function ptn_gPhoto_WP_CreateAlbum_shortcode(){
 	*/
 }
 
-/// ----------------------------------------------------------------------------------------------------------
+// ----------------------------------------------------------------------------------------------------------
 // Includes
 // ----------------------------------------------------------------------------------------------------------
 require_once(dirname(__FILE__)."/includes/albums.php");
 require_once(dirname(__FILE__).'/includes/photos.php');
+require_once(dirname(__FILE__).'/includes/settings.php');
 
 // ----------------------------------------------------------------------------------------------------------
 // Actions, Filters and Shortcodes

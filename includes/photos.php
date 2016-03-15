@@ -8,12 +8,11 @@ function ptn_postPhoto(){
 		$TOKEN_EXPIRES		= get_option("pwaplusphp_token_expires");
 		$now = date("U");
 		if ($now > $TOKEN_EXPIRES) {
-			pwaplusphp_refreshOAuth2Token();
+			refreshOAuth2Token();
 		}
 		$albumID = $_POST['ALBUM_ID'];
-		$PICASAWEB_USER	 	= get_option("pwaplusphp_picasa_username");	
-		$PICASAWEB_USER = strstr($PICASAWEB_USER,'@',true);
-		$albumURL = 'https://picasaweb.google.com/data/feed/api/user/'.$PICASAWEB_USER.'/albumid/'.$albumID; 
+		$albumURL = ptn_getPhotoURL();
+		$albumURL = $albumURL.'/albumid/'.$albumID;
 		
 		foreach ($_FILES['fileselect']['tmp_name'] as $imgName){
 		
@@ -65,9 +64,6 @@ function ptn_uploadPhotos($album){
 	</div>
 	</fieldset>
 	</form>
-	<div id="messages">
-	<p>Status Messages</p>
-	</div>
 	';
 }
 

@@ -3,7 +3,8 @@
 // ----------------------------------------------------------------------------------------------------------
 // Get a list of album IDs and Names from selected Google Photo Account
 // ----------------------------------------------------------------------------------------------------------
-function ptn_getAlbums($file){
+function ptn_getAlbums(){	
+	$file = ptn_getPhotoURL();
 	$file = $file.'?kind=album&fields=entry(id,title)';
 	$xml = simplexml_load_file($file);
 	foreach ($xml as $album){
@@ -65,7 +66,7 @@ function ptn_createAlbum($file, $title){
 	$TOKEN_EXPIRES		= get_option("pwaplusphp_token_expires");
 	$now = date("U");
 	if ($now > $TOKEN_EXPIRES) {
-		pwaplusphp_refreshOAuth2Token();
+		refreshOAuth2Token();
 	}	
 	$message_body = 	
 			"<entry xmlns='http://www.w3.org/2005/Atom'
@@ -101,6 +102,7 @@ function ptn_createAlbum($file, $title){
 	return($code);
 }
 
+//function ptn_gPhoto_WP_CreateAlbum_shortcode(){
 function ptn_CreateAlbumForm(){
 		echo '
 		<form id="upload" method="POST" enctype="multipart/form-data">
@@ -126,26 +128,28 @@ function ptn_validateAlbumForm(){
 			error message
 		else
 	*/
-	
-	$PICASAWEB_USER	= get_option("pwaplusphp_picasa_username");	
-	$PICASAWEB_USER = strstr($PICASAWEB_USER,'@',true);
-	$file = 'https://picasaweb.google.com/data/feed/api/user/'.$PICASAWEB_USER;
-	
+	$albums = ptn_getAlbums();
 	$title = $_POST['albumname'];
 	
-	ptn_createAlbum($file, $title);
-	
-	$post = array(
-		'post_title' => $title,
-		'post_type' => 'page',
-		'post_content' => 'Please use this page to upload photos to the '.$title.'album.</br></br>[UploadPhotos]',
-		'post_status' => 'publish'
+	if (ptn_duplicateAlbumCk($title, $albums)){
+		$ptn_createAlbumStatus = ptn_createAlbum($file, $title);
+		// ERROR
+		// RESET FORM
+	}else{
+		$file =ptn_getPhotoURL();
+		ptn_createAlbum($file, $title);
+		$post = array(
+			'post_title' => $title,
+			'post_type' => 'page',
+			'post_content' => 'Please use this page to upload photos to the '.$title.'album.</br></br>[UploadPhotos]',
+			'post_status' => 'publish'
 		);
-	$error = true;
-	wp_insert_post($post, $error);	
-	
-	// redirect to newly created page here
-	
+		$error = true;
+		wp_insert_post($post, $error);
+		$page = get_page_by_title($title, '', 'page');
+		$link = get_permalink($page->ID);	
+		wp_redirect($link);
+	}
 }
 
 // ----------------------------------------------------------------------------------------------------------
