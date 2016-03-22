@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------------------------------------------
 // Post photos to specified Google Photo album
 // ----------------------------------------------------------------------------------------------------------
-function ptn_postPhoto(){
+function ptn_gPhoto_WP_postPhoto(){
 	if(!isset($_POST['UPLOAD FILES'])){		
 		$TOKEN_EXPIRES		= get_option("pwaplusphp_token_expires");
 		$now = date("U");
@@ -48,7 +48,7 @@ function ptn_postPhoto(){
 // ----------------------------------------------------------------------------------------------------------
 // Photo upload form
 // ----------------------------------------------------------------------------------------------------------
-function ptn_uploadPhotos($album){
+function ptn_gPhoto_WP_uploadPhotos($album){
 	echo '
 	<form id="upload" method="POST" enctype="multipart/form-data">
 	<fieldset>
@@ -70,6 +70,6 @@ function ptn_uploadPhotos($album){
 // ----------------------------------------------------------------------------------------------------------
 // Redirect form POST to same page
 // ----------------------------------------------------------------------------------------------------------
-add_action('template_redirect', 'ptn_postPhoto');
+add_action('template_redirect', 'ptn_gPhoto_WP_postPhoto');
 
 ?>
