@@ -63,8 +63,6 @@ require_once(dirname(__FILE__).'/includes/settings.php');
 add_action('admin_menu', 'ptnpicasa_menu');
 add_filter('widget_text', 'do_shortcode');
 add_shortcode('UploadPhotos', 'ptn_gPhoto_WP_PhotoUpload_shortcode');
-//add_shortcode('CreateAlbum', 'ptn_gPhoto_WP_CreateAlbum_shortcode');
-add_shortcode('CreateAlbum', 'ptn_createAlbumForm');
-
+add_shortcode('CreateAlbum', 'ptn_gPhoto_WP_CreateAlbum_shortcode');
 
 ?>
