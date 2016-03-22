@@ -24,19 +24,6 @@ function ptn_gPhoto_WP_activate() {
 }
 register_activation_hook( __FILE__, 'ptn_gPhoto_WP_activate' );
 
-
-// ----------------------------------------------------------------------------------------------------------
-// Create a page with the photo upload form
-// ----------------------------------------------------------------------------------------------------------
-function ptn_gPhoto_WP_PhotoUpload_shortcode( $atts, $content = null ) {
-		
-	$albums = ptn_getAlbums();	
-	$title = get_the_title();	
-	$albumId = ptn_getAlbumIdByName($title, $albums);
-	ptn_uploadPhotos($albumId);
-	
-} // end shortcode
-
 // ----------------------------------------------------------------------------------------------------------
 // Includes
 // ----------------------------------------------------------------------------------------------------------
@@ -49,7 +36,6 @@ require_once(dirname(__FILE__).'/includes/settings.php');
 // ----------------------------------------------------------------------------------------------------------
 add_action('admin_menu', 'ptnpicasa_menu');
 add_filter('widget_text', 'do_shortcode');
-//add_shortcode('UploadPhotos', 'ptn_gPhoto_WP_PhotoUpload_shortcode');
 add_shortcode('UploadPhotos', 'ptn_gPhoto_WP_UploadPhotos_shortcode');
 add_shortcode('CreateAlbum', 'ptn_gPhoto_WP_CreateAlbum_shortcode');
 
