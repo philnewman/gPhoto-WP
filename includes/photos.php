@@ -48,7 +48,7 @@ function ptn_gPhoto_WP_postPhoto(){
 // ----------------------------------------------------------------------------------------------------------
 // Photo upload form
 // ----------------------------------------------------------------------------------------------------------
-function ptn_gPhoto_WP_uploadPhotos($album){
+function ptn_gPhoto_WP_uploadPhotos_shortcode($album){
 	echo '
 	<form id="upload" method="POST" enctype="multipart/form-data">
 	<fieldset>
