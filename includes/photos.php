@@ -48,13 +48,20 @@ function ptn_gPhoto_WP_postPhoto(){
 // ----------------------------------------------------------------------------------------------------------
 // Photo upload form
 // ----------------------------------------------------------------------------------------------------------
-function ptn_gPhoto_WP_uploadPhotos_shortcode($album){
+function ptn_gPhoto_WP_UploadPhotos_shortcode($albumId = NULL){
+	
+	if (is_null($albumId)){
+		$albums = ptn_getAlbums();	
+		$title = get_the_title();	
+		$albumId = ptn_getAlbumIdByName($title, $albums);
+	}
+	
 	echo '
 	<form id="upload" method="POST" enctype="multipart/form-data">
 	<fieldset>
 	<legend>HTML File Upload</legend>
 	<input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
-	<input type="hidden" id="ALBUM_ID" name="ALBUM_ID" value='.$album.' />
+	<input type="hidden" id="ALBUM_ID" name="ALBUM_ID" value='.$albumId.' />
 	<div>
 		<label for="fileselect">Files to upload:</label>
 		<input type="file" id="fileselect" name="fileselect[]" multiple="multiple" accept=".jpg,.gif,.png,.bmp"/>';
