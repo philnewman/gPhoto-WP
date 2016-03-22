@@ -3,7 +3,7 @@
 // ----------------------------------------------------------------------------------------------------------
 // Get a list of album IDs and Names from selected Google Photo Account
 // ----------------------------------------------------------------------------------------------------------
-function ptn_getAlbums(){	
+function ptn_gPhoto_WP_getAlbums(){	
 	$file = ptn_getPhotoURL();
 	$file = $file.'?kind=album&fields=entry(id,title)';
 	$xml = simplexml_load_file($file);
@@ -16,7 +16,7 @@ function ptn_getAlbums(){
 // ----------------------------------------------------------------------------------------------------------
 // Display album ID and Name in a list - primarily used for debugging
 // ----------------------------------------------------------------------------------------------------------
-function ptn_displayAlbums($albumArray){
+function ptn_gPhoto_WP_displayAlbums($albumArray){
 	foreach($albumArray as $album){
 		print $album->id.' '.$album->title;
 		print '<br>';
@@ -26,7 +26,7 @@ function ptn_displayAlbums($albumArray){
 // ----------------------------------------------------------------------------------------------------------
 // Get album ID by album name
 // ----------------------------------------------------------------------------------------------------------
-function ptn_getAlbumIdByName($albumName, $albumArray){
+function ptn_gPhoto_WP_getAlbumIdByName($albumName, $albumArray){
 	foreach ($albumArray as $album){
 		if ($album->title == $albumName){
 			return $album->id;
@@ -38,7 +38,7 @@ function ptn_getAlbumIdByName($albumName, $albumArray){
 // ----------------------------------------------------------------------------------------------------------
 // Get album name from album ID
 // ----------------------------------------------------------------------------------------------------------
-function ptn_getAlbumNameById($albumId, $albumArray){
+function ptn_gPhoto_WP_getAlbumNameById($albumId, $albumArray){
 	foreach ($albumArray as $album){
 		if ($album->id == $albumId){
 			return $album->title;
@@ -50,7 +50,7 @@ function ptn_getAlbumNameById($albumId, $albumArray){
 // ----------------------------------------------------------------------------------------------------------
 // Determine if album with this name already exists
 // ----------------------------------------------------------------------------------------------------------
-function ptn_duplicateAlbumCk($title, $albumArray){
+function ptn_gPhoto_WP_duplicateAlbumCk($title, $albumArray){
 	foreach ($albumArray as $album){
 		if ($album->title == $title){
 			return true;
@@ -62,7 +62,7 @@ function ptn_duplicateAlbumCk($title, $albumArray){
 // ----------------------------------------------------------------------------------------------------------
 // Create a new Google Photo Album
 // ----------------------------------------------------------------------------------------------------------
-function ptn_createAlbum($file, $title){
+function ptn_gPhoto_WP_createAlbum($file, $title){
 	$TOKEN_EXPIRES		= get_option("pwaplusphp_token_expires");
 	$now = date("U");
 	if ($now > $TOKEN_EXPIRES) {
@@ -102,8 +102,10 @@ function ptn_createAlbum($file, $title){
 	return($code);
 }
 
-//function ptn_gPhoto_WP_CreateAlbum_shortcode(){
-function ptn_CreateAlbumForm(){
+// ----------------------------------------------------------------------------------------------------------
+// Present from to create a new album
+// ----------------------------------------------------------------------------------------------------------
+function ptn_gPhoto_WP_CreateAlbum_shortcode(){
 		echo '
 		<form id="upload" method="POST" enctype="multipart/form-data">
 		<fieldset>
@@ -121,23 +123,17 @@ function ptn_CreateAlbumForm(){
 
 }
 
-function ptn_validateAlbumForm(){
-
-	/* if is this a duplicate
-			reset form
-			error message
-		else
-	*/
-	$albums = ptn_getAlbums();
+function ptn_gPhoto_WP_validateAlbumForm(){
+	$albums = ptn_gPhoto_WP_getAlbums();
 	$title = $_POST['albumname'];
 	
 	if (ptn_duplicateAlbumCk($title, $albums)){
-		$ptn_createAlbumStatus = ptn_createAlbum($file, $title);
+		$ptn_createAlbumStatus = ptn_gPhoto_WP_createAlbum($file, $title);
 		// ERROR
 		// RESET FORM
 	}else{
-		$file =ptn_getPhotoURL();
-		ptn_createAlbum($file, $title);
+		$file =ptn_gPhoto_WP_getPhotoURL();
+		ptn_gPhoto_WP_createAlbum($file, $title);
 		$post = array(
 			'post_title' => $title,
 			'post_type' => 'page',
@@ -155,6 +151,6 @@ function ptn_validateAlbumForm(){
 // ----------------------------------------------------------------------------------------------------------
 // Redirect form POST to same page
 // ----------------------------------------------------------------------------------------------------------
-add_action('template_redirect', 'ptn_validateAlbumForm');
+add_action('template_redirect', 'ptn_gPhoto_WP_validateAlbumForm');
 
 ?>
