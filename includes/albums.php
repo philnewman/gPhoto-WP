@@ -3,8 +3,8 @@
 // ----------------------------------------------------------------------------------------------------------
 // Get a list of album IDs and Names from selected Google Photo Account
 // ----------------------------------------------------------------------------------------------------------
-function ptn_gPhoto_WP_getAlbums(){	
-	$file = ptn_getPhotoURL();
+function ptn_gPhoto_WP_getAlbums(){
+	$file = ptn_gPhoto_WP_getPhotoURL();
 	$file = $file.'?kind=album&fields=entry(id,title)';
 	$xml = simplexml_load_file($file);
 	foreach ($xml as $album){
@@ -51,6 +51,7 @@ function ptn_gPhoto_WP_getAlbumNameById($albumId, $albumArray){
 // Determine if album with this name already exists
 // ----------------------------------------------------------------------------------------------------------
 function ptn_gPhoto_WP_duplicateAlbumCk($title, $albumArray){
+
 	foreach ($albumArray as $album){
 		if ($album->title == $title){
 			return true;
@@ -67,8 +68,8 @@ function ptn_gPhoto_WP_createAlbum($file, $title){
 	$now = date("U");
 	if ($now > $TOKEN_EXPIRES) {
 		refreshOAuth2Token();
-	}	
-	$message_body = 	
+	}
+	$message_body =
 			"<entry xmlns='http://www.w3.org/2005/Atom'
 		    	xmlns:media='http://search.yahoo.com/mrss/'
 		    	xmlns:gphoto='http://schemas.google.com/photos/2007'>
@@ -88,16 +89,16 @@ function ptn_gPhoto_WP_createAlbum($file, $title){
 	curl_setopt($ch, CURLOPT_URL, $file);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
-	curl_setopt($ch, CURLOPT_POST);
+	curl_setopt($ch, CURLOPT_POST, true);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $message_body);
 
 	$GDATA_TOKEN = get_option("pwaplusphp_oauth_token");
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-             'Authorization: Bearer ' . $GDATA_TOKEN, 
+             'Authorization: Bearer ' . $GDATA_TOKEN,
 			 'Content-Type: application/atom+xml'
             ));
 	$response = curl_exec($ch);
-	$code = curl_getinfo($ch, CURLINFO_HTTP_CODE); 	
+	$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 	curl_close($ch);
 	return($code);
 }
@@ -106,6 +107,13 @@ function ptn_gPhoto_WP_createAlbum($file, $title){
 // Present from to create a new album
 // ----------------------------------------------------------------------------------------------------------
 function ptn_gPhoto_WP_CreateAlbum_shortcode(){
+
+		global $error;
+
+		if( is_wp_error( $error ) ) {
+    	echo '<div class="error">'.$error->get_error_message().'</div>';
+		}
+
 		echo '
 		<form id="upload" method="POST" enctype="multipart/form-data">
 		<fieldset>
@@ -123,34 +131,48 @@ function ptn_gPhoto_WP_CreateAlbum_shortcode(){
 
 }
 
-function ptn_gPhoto_WP_validateAlbumForm(){
+function ptn_gPhoto_WP_ValidateAlbumForm(){
+
+	global $error;
+
 	$albums = ptn_gPhoto_WP_getAlbums();
 	$title = $_POST['albumname'];
-	
-	if (ptn_duplicateAlbumCk($title, $albums)){
-		$ptn_createAlbumStatus = ptn_gPhoto_WP_createAlbum($file, $title);
-		// ERROR
-		// RESET FORM
+	if (ptn_gPhoto_WP_duplicateAlbumCk($title, $albums)) {
+		$error = new WP_Error('duplicate', __("Album already exists"));
+		return;
 	}else{
-		$file =ptn_gPhoto_WP_getPhotoURL();
-		ptn_gPhoto_WP_createAlbum($file, $title);
-		$post = array(
-			'post_title' => $title,
-			'post_type' => 'page',
-			'post_content' => 'Please use this page to upload photos to the '.$title.'album.</br></br>[UploadPhotos]',
-			'post_status' => 'publish'
-		);
-		$error = true;
-		wp_insert_post($post, $error);
-		$page = get_page_by_title($title, '', 'page');
-		$link = get_permalink($page->ID);	
-		wp_redirect($link);
-	}
+				$file = ptn_gPhoto_WP_getPhotoURL();
+				$ptn_createAlbumStatus = ptn_gPhoto_WP_createAlbum($file, $title);
+				$newAlbum = array(
+					'id'=>'newID',
+					'title'=>$title
+				);
+			$albums->title = $title;
+
+				echo '<pre>';
+				echo gettype($albums);
+				var_dump($albums);
+				echo '</pre>';
+				$albums = ptn_gPhoto_WP_getAlbums();
+				$post = array(
+					'post_title' => $title,
+					'post_type' => 'page',
+					'post_content' => 'Please use this page to upload photos to the '.$title.'album.</br></br>[UploadPhotos]',
+					'post_status' => 'publish'
+				);
+
+				if (!is_null($title)){
+					// wp_insert_post($post);
+					$page = get_page_by_title($title, '', 'page');
+					$link = get_permalink($page->ID);
+					wp_redirect($link);
+				}
+		}
 }
 
 // ----------------------------------------------------------------------------------------------------------
 // Redirect form POST to same page
 // ----------------------------------------------------------------------------------------------------------
-add_action('template_redirect', 'ptn_gPhoto_WP_validateAlbumForm');
+add_action('template_redirect', 'ptn_gPhoto_WP_ValidateAlbumForm');
 
 ?>

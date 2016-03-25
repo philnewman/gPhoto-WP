@@ -1,15 +1,12 @@
 <?php
 /*
 Plugin Name: 	gPhoto-WP
-Plugin URI: 	
-Description:	
+Plugin URI:
+Description:
 Author: 	Phil Newman
 Version:	0.1
-Author URI: 	
+Author URI:
 */
-
-define( 'WP_DEBUG', true );
-error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
 
 // ----------------------------------------------------------------------------------------------------------
 // Ensure that PWA+PHP is installed
@@ -34,7 +31,6 @@ require_once(dirname(__FILE__).'/includes/settings.php');
 // ----------------------------------------------------------------------------------------------------------
 // Actions, Filters and Shortcodes
 // ----------------------------------------------------------------------------------------------------------
-add_action('admin_menu', 'ptnpicasa_menu');
 add_filter('widget_text', 'do_shortcode');
 add_shortcode('UploadPhotos', 'ptn_gPhoto_WP_UploadPhotos_shortcode');
 add_shortcode('CreateAlbum', 'ptn_gPhoto_WP_CreateAlbum_shortcode');

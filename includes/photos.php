@@ -4,18 +4,23 @@
 // Post photos to specified Google Photo album
 // ----------------------------------------------------------------------------------------------------------
 function ptn_gPhoto_WP_postPhoto(){
-	if(!isset($_POST['UPLOAD FILES'])){		
+	if(!isset($_POST['UPLOAD FILES'])){
 		$TOKEN_EXPIRES		= get_option("pwaplusphp_token_expires");
 		$now = date("U");
 		if ($now > $TOKEN_EXPIRES) {
 			refreshOAuth2Token();
 		}
 		$albumID = $_POST['ALBUM_ID'];
-		$albumURL = ptn_getPhotoURL();
+		$albumURL = ptn_gPhoto_WP_getPhotoURL();
 		$albumURL = $albumURL.'/albumid/'.$albumID;
-		
+
+		echo '<pre>';
+		var_dump($_FILES);
+echo '</pre>';
+		if (!empty($_FILES)){
+
 		foreach ($_FILES['fileselect']['tmp_name'] as $imgName){
-		
+
 			// Get the binary image data
 			$fileSize = filesize($imgName);
 			$fh = fopen($imgName, 'rb');
@@ -39,8 +44,9 @@ function ptn_gPhoto_WP_postPhoto(){
 				'Slug: '.$imgName
 				));
 			$response = curl_exec($ch);
-			$code = curl_getinfo($ch, CURLINFO_HTTP_CODE); 
+			$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 			curl_close($ch);
+		}
 		}
 	}
 }
@@ -49,13 +55,13 @@ function ptn_gPhoto_WP_postPhoto(){
 // Photo upload form
 // ----------------------------------------------------------------------------------------------------------
 function ptn_gPhoto_WP_UploadPhotos_shortcode($albumId = NULL){
-	
+
 	if (is_null($albumId)){
-		$albums = ptn_getAlbums();	
-		$title = get_the_title();	
+		$albums = ptn_getAlbums();
+		$title = get_the_title();
 		$albumId = ptn_getAlbumIdByName($title, $albums);
 	}
-	
+
 	echo '
 	<form id="upload" method="POST" enctype="multipart/form-data">
 	<fieldset>
