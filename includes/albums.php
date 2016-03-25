@@ -143,17 +143,6 @@ function ptn_gPhoto_WP_ValidateAlbumForm(){
 	}else{
 				$file = ptn_gPhoto_WP_getPhotoURL();
 				$ptn_createAlbumStatus = ptn_gPhoto_WP_createAlbum($file, $title);
-				$newAlbum = array(
-					'id'=>'newID',
-					'title'=>$title
-				);
-			$albums->title = $title;
-
-				echo '<pre>';
-				echo gettype($albums);
-				var_dump($albums);
-				echo '</pre>';
-				$albums = ptn_gPhoto_WP_getAlbums();
 				$post = array(
 					'post_title' => $title,
 					'post_type' => 'page',
