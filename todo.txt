@@ -1,8 +1,6 @@
 
 /** TO DO 
 
-- rename createAlbumShortcode
-- move uploadPhotoShortcode to photos.php
 - finish / test if new album create logic
 - better error handling on activation error
 - self-deactivation if pwaplusphp is not active
