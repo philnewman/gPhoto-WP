@@ -14,39 +14,34 @@ function ptn_gPhoto_WP_postPhoto(){
 		$albumURL = ptn_gPhoto_WP_getPhotoURL();
 		$albumURL = $albumURL.'/albumid/'.$albumID;
 
-		echo '<pre>';
-		var_dump($_FILES);
-echo '</pre>';
 		if (!empty($_FILES)){
+			foreach ($_FILES['fileselect']['tmp_name'] as $imgName){
+				// Get the binary image data
+				$fileSize = filesize($imgName);
+				$fh = fopen($imgName, 'rb');
+				$imgData = fread($fh, $fileSize);
+				$data = $imgData;
+				fclose($fh);
+				$ch = curl_init();
+				$timeout = 0; // set to zero for no timeout
+				curl_setopt($ch, CURLOPT_URL, $albumURL);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+				curl_setopt($ch, CURLOPT_POST);
+				curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
-		foreach ($_FILES['fileselect']['tmp_name'] as $imgName){
+				$GDATA_TOKEN = get_option("pwaplusphp_oauth_token");
 
-			// Get the binary image data
-			$fileSize = filesize($imgName);
-			$fh = fopen($imgName, 'rb');
-			$imgData = fread($fh, $fileSize);
-			$data = $imgData;
-			fclose($fh);
-			$ch = curl_init();
-			$timeout = 0; // set to zero for no timeout
-			curl_setopt($ch, CURLOPT_URL, $albumURL);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_POST);
-			curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-
-			$GDATA_TOKEN = get_option("pwaplusphp_oauth_token");
-
-			curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-				'Authorization: Bearer '. $GDATA_TOKEN,
-				'Content-Type: image/jpeg',
-				'Content-Length: '.$fileSize,
-				'Slug: '.$imgName
-				));
-			$response = curl_exec($ch);
-			$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-			curl_close($ch);
-		}
+				curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+					'Authorization: Bearer '. $GDATA_TOKEN,
+					'Content-Type: image/jpeg',
+					'Content-Length: '.$fileSize,
+					'Slug: '.$imgName
+					));
+					$response = curl_exec($ch);
+					$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					curl_close($ch);
+				}
 		}
 	}
 }

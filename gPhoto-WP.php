@@ -11,7 +11,6 @@ Author URI:
 // ----------------------------------------------------------------------------------------------------------
 // Ensure that PWA+PHP is installed
 // ----------------------------------------------------------------------------------------------------------
-
 function ptn_gPhoto_WP_activate() {
 	$PWAPLUSPHP = 'pwaplusphp/pwaplusphp.php';
 	if (!is_plugin_active($PWAPLUSPHP)){

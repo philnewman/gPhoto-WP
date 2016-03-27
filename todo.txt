@@ -1,15 +1,12 @@
 
-/** TO DO 
+/** TO DO
 
-- finish / test if new album create logic
 - better error handling on activation error
 - self-deactivation if pwaplusphp is not active
 
 - upgrade upload to drag / drop zone
-- test for timeouts
 
 - Version
 - Upload to wordpress.org/plugins
 
 */
-

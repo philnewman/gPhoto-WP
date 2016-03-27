@@ -131,6 +131,10 @@ function ptn_gPhoto_WP_CreateAlbum_shortcode(){
 
 }
 
+// ----------------------------------------------------------------------------------------------------------
+// Validate the data from the new album form
+// Ensure this is not duplicate album and create a WP Page to upload photos
+// ----------------------------------------------------------------------------------------------------------
 function ptn_gPhoto_WP_ValidateAlbumForm(){
 
 	global $error;
@@ -151,7 +155,7 @@ function ptn_gPhoto_WP_ValidateAlbumForm(){
 				);
 
 				if (!is_null($title)){
-					// wp_insert_post($post);
+					wp_insert_post($post);
 					$page = get_page_by_title($title, '', 'page');
 					$link = get_permalink($page->ID);
 					wp_redirect($link);
