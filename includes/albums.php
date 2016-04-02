@@ -150,7 +150,7 @@ function ptn_gPhoto_WP_ValidateAlbumForm(){
 				$post = array(
 					'post_title' => $title,
 					'post_type' => 'page',
-					'post_content' => 'Please use this page to upload photos to the '.$title.'album.</br></br>[UploadPhotos]',
+					'post_content' => 'Please use this page to upload photos to the '.$title.' album.</br></br>[UploadPhotos]',
 					'post_status' => 'publish'
 				);
 

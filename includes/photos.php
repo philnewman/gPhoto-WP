@@ -4,12 +4,23 @@
 // Post photos to specified Google Photo album
 // ----------------------------------------------------------------------------------------------------------
 function ptn_gPhoto_WP_postPhoto(){
+
+// Error check here if $_POST and $_FILES are empty then
+// the upload was too large for the server settings.
+	echo '<pre>';
+//	var_dump($_POST);
+//	echo '</br>';
+	var_dump($_FILES);
+	echo '</pre>';
+
+
 	if(!isset($_POST['UPLOAD FILES'])){
 		$TOKEN_EXPIRES		= get_option("pwaplusphp_token_expires");
 		$now = date("U");
 		if ($now > $TOKEN_EXPIRES) {
 			refreshOAuth2Token();
 		}
+
 		$albumID = $_POST['ALBUM_ID'];
 		$albumURL = ptn_gPhoto_WP_getPhotoURL();
 		$albumURL = $albumURL.'/albumid/'.$albumID;
@@ -26,7 +37,7 @@ function ptn_gPhoto_WP_postPhoto(){
 				$timeout = 0; // set to zero for no timeout
 				curl_setopt($ch, CURLOPT_URL, $albumURL);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-				curl_setopt($ch, CURLOPT_POST);
+				curl_setopt($ch, CURLOPT_POST, true);
 				curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
 				curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 
@@ -40,6 +51,7 @@ function ptn_gPhoto_WP_postPhoto(){
 					));
 					$response = curl_exec($ch);
 					$code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+					// if $code != 0 then error here
 					curl_close($ch);
 				}
 		}
@@ -51,17 +63,17 @@ function ptn_gPhoto_WP_postPhoto(){
 // ----------------------------------------------------------------------------------------------------------
 function ptn_gPhoto_WP_UploadPhotos_shortcode($albumId = NULL){
 
-	if (is_null($albumId)){
-		$albums = ptn_getAlbums();
+//if (empty($albumId)){
+		$albums = ptn_gPhoto_WP_getAlbums();
 		$title = get_the_title();
-		$albumId = ptn_getAlbumIdByName($title, $albums);
-	}
+		$albumId = ptn_gPhoto_WP_getAlbumIdByName($title, $albums);
+//}
 
 	echo '
 	<form id="upload" method="POST" enctype="multipart/form-data">
 	<fieldset>
-	<legend>HTML File Upload</legend>
-	<input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="300000" />
+	<legend>Upload up to 32M of photos to the '.$title.' album.</legend>
+	<input type="hidden" id="MAX_FILE_SIZE" name="MAX_FILE_SIZE" value="33554432" />
 	<input type="hidden" id="ALBUM_ID" name="ALBUM_ID" value='.$albumId.' />
 	<div>
 		<label for="fileselect">Files to upload:</label>
